@@ -33,9 +33,9 @@ Inspired by antirez's sds and gingerBill's gb_string.h.
 4. Don't call oso functions with arguments that have overlapping memory.
 
   oso *mystring = NULL;
-  osolen(mystring);                // OK, Gives 0
+  osolen(mystring);                // OK, gives 0
   osocat(&mystring, "waffles");    // OK
-  osolen(mystring);                // Gives 7
+  osolen(mystring);                // OK, gives 7
 
   osocat(&mystring, NULL);         // Bad, crashes
   osocat(NULL, "foo");             // Bad, crashes
