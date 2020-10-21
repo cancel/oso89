@@ -235,13 +235,6 @@ osowipe(oso **p)
    OSO_NONNULL((1));
 
 void
-ososwap(oso **a, oso **b)
-/* Swaps the two pointers. Why bother making a function for this? In case you
-   need to debug a memory management problem in the future. You can put some
-   debug code in the definition. */
-   OSO_NONNULL((1, 2));
-
-void
 osopokelen(oso *s, size_t len)
 /* Manually updates length field. Doesn't do anything else for you. */
    OSO_NONNULL((1));
@@ -267,6 +260,13 @@ void
 osotrim(oso *s, char const *cut_set)
 /* Remove the characters in `cut_set` from the beginning and ending of `s`. */
    OSO_NONNULL((2));
+
+void
+ososwap(oso **a, oso **b)
+/* Swaps the two pointers. Why bother making a function for this? In case you
+   need to debug a memory management problem in the future. You can put some
+   debug code in the definition. */
+   OSO_NONNULL((1, 2));
 
 /* clang-format on */
 #undef OSO_PRINTF
