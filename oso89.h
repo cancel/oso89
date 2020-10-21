@@ -1,24 +1,23 @@
 #pragma once
-/*
-Heap-allocated string handling.
-Inspired by antirez's sds and gingerBill's gb_string.h.
+/* Heap-allocated string handling.
+   Inspired by antirez's sds and gingerBill's gb_string.h.
 
 
                                EXAMPLE
                               ---------
 
-  oso *mystring = NULL;
-  osoput(&mystring, "Hello World");
-  puts((char *)mystring);
-  osoput(&mystring, "How about some pancakes?");
-  puts((char *)mystring);
-  osocatprintf(&mstring, " Sure! I'd like %d.", 5);
-  puts((char *)mystring);
-  osofree(mystring);
+oso *mystring = NULL;
+osoput(&mystring, "Hello World");
+puts((char *)mystring);
+osoput(&mystring, "How about some pancakes?");
+puts((char *)mystring);
+osocatprintf(&mstring, " Sure! I'd like %d.", 5);
+puts((char *)mystring);
+osofree(mystring);
 
-  > Hello World!
-  > How about some pancakes?
-  > How about some pancakes? Sure! I'd like 5.
+> Hello World!
+> How about some pancakes?
+> How about some pancakes? Sure! I'd like 5.
 
 
                                 RULES
@@ -32,25 +31,25 @@ Inspired by antirez's sds and gingerBill's gb_string.h.
 
 4. Don't call oso functions with arguments that have overlapping memory.
 
-  oso *mystring = NULL;
-  osolen(mystring);                // OK, gives 0
-  osocat(&mystring, "waffles");    // OK
-  osolen(mystring);                // OK, gives 7
+oso *mystring = NULL;
+osolen(mystring);                // OK, gives 0
+osocat(&mystring, "waffles");    // OK
+osolen(mystring);                // OK, gives 7
 
-  osocat(&mystring, NULL);         // Bad, crashes
-  osocat(NULL, "foo");             // Bad, crashes
-  osocatoso(&mystring, *mystring); // Bad, no idea what happens
+osocat(&mystring, NULL);         // Bad, crashes
+osocat(NULL, "foo");             // Bad, crashes
+osocatoso(&mystring, *mystring); // Bad, no idea what happens
 
 
                                 NAMES
                                -------
 
-  osoput______ -> Replace the contents.
-  osocat______ -> Append to the contents.
-  ______len    -> Do it with an explicit length argument, so the C-string
-                  doesn't have to be null-terminated.
-  ______oso    -> Do it with a second oso string.
-  ______printf -> Do it by using printf.
+    osoput______ -> Replace the contents.
+    osocat______ -> Append to the contents.
+    ______len    -> Do it with an explicit length argument, so the
+                    C-string doesn't have to be null-terminated.
+    ______oso    -> Do it with a second oso string.
+    ______printf -> Do it by using printf.
 
 
                             ALLOC FAILURE
