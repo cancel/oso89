@@ -30,6 +30,7 @@ Options:
     -s             Print statistics about compile time and binary size.
     -v             Print important commands as they're executed.
     -z             Build with valgrind-compatible options.
+                   This will disable asan and ubsan.
     -h or --help   Print this message and exit.
 EOF
 }
