@@ -26,6 +26,8 @@
 #define STB_SPRINTF_DECORATE(name) oso_implsp_##name
 
 #if defined(__clang__) && defined(OSO_NOSAN_AVAIL)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang attribute push(                                           \
   __attribute__((no_sanitize(                                           \
     "unsigned-integer-overflow", "implicit-conversion", "undefined"))), \
@@ -51,6 +53,7 @@
 
 #if defined(__clang__) && defined(OSO_NOSAN_AVAIL)
 #pragma clang attribute pop
+#pragma clang diagnostic pop
 #endif
 #if defined(OSO_NOSAN_AVAIL)
 #undef OSO_NOSAN_AVAIL
