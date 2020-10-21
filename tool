@@ -364,9 +364,9 @@ build_target() {
   add source_files oso89.c
   add cc_flags -isystem thirdparty
   case $1 in
-    cli)
-      add source_files main.c
-      out_exe=cli
+    hello)
+      add source_files hello.c
+      out_exe=hello
       ;;
     orca|tui)
       add source_files osc_out.c term_util.c sysmisc.c thirdparty/oso.c tui_main.c
