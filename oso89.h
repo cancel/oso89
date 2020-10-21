@@ -26,9 +26,9 @@ Inspired by antirez's sds and gingerBill's gb_string.h.
 
 1. You can use null as an empty `oso *` string. 
 
-2. But you can't pass null `char const *` or `oso **` arguments.
+2. But `char const *` or `oso **` arguments to oso functions can't be null.
 
-3. `oso *` can always be cast to `char *`, but it might be null.
+3. You can always cast `oso *` to `char *`, but it might be null.
 
 4. Don't call oso functions with arguments that have overlapping memory.
 
@@ -46,7 +46,7 @@ Inspired by antirez's sds and gingerBill's gb_string.h.
                                -------
 
   osoput______ -> Replace the contents.
-  osocat______ -> Append.
+  osocat______ -> Append to the contents.
   ______len    -> Do it with an explicit length argument, so the C-string
                   doesn't have to be null-terminated.
   ______oso    -> Do it with a second oso string.
