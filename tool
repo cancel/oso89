@@ -29,6 +29,7 @@ Options:
                    Note: --pie and --static cannot be mixed.
     -s             Print statistics about compile time and binary size.
     -v             Print important commands as they're executed.
+    -z             Build with valgrind-compatible options.
     -h or --help   Print this message and exit.
 EOF
 }
@@ -78,8 +79,9 @@ stats_enabled=0
 pie_enabled=0
 static_enabled=0
 config_mode=release
+for_valgrind=0
 
-while getopts c:dhst:v-: opt_val; do
+while getopts c:dhst:vz-: opt_val; do
   case "$opt_val" in
     -)
       case "$OPTARG" in
@@ -100,6 +102,7 @@ while getopts c:dhst:v-: opt_val; do
     s) stats_enabled=1;;
     t) std="$OPTARG";;
     v) verbose=1;;
+    z) for_valgrind=1;;
     \?) print_usage >&2; exit 1;;
     *) break;;
   esac
@@ -257,6 +260,9 @@ build_target() {
     add cc_flags -Wconversion -Wshadow -Wstrict-prototypes \
       -Werror=implicit-function-declaration -Werror=implicit-int \
       -Werror=incompatible-pointer-types -Werror=int-conversion
+    if [[ $for_valgrind = 1 ]]; then
+      add cc_flags -fno-omit-frame-pointer
+    fi
   fi
   if [[ $cc_id = tcc ]]; then
     add cc_flags -Wunsupported
@@ -287,15 +293,15 @@ build_target() {
   case $config_mode in
     debug)
       add cc_flags -DDEBUG -ggdb
-      # cygwin gcc doesn't seem to have this stuff, just elide for now
-      if [[ $os != cygwin ]]; then
+      # cygwin gcc doesn't seem to have working asan/ubsan stuff, so don't use
+      # the sanitizers there. And if we're building with intent to use with
+      # valgrind, also don't use the sanitizers, since they don't get along.
+      if [[ $os != cygwin && $for_valgrind = 0 ]]; then
         if cc_id_and_vers_gte gcc 6.0.0 || cc_id_and_vers_gte clang 3.9.0; then
-          add cc_flags -fsanitize=address -fsanitize=undefined \
-            -fsanitize=float-divide-by-zero
+          add cc_flags -fsanitize=address,undefined,float-divide-by-zero
         fi
         if cc_id_and_vers_gte clang 7.0.0; then
-          add cc_flags -fsanitize=implicit-conversion \
-            -fsanitize=unsigned-integer-overflow
+          add cc_flags -fsanitize=implicit-conversion,unsigned-integer-overflow
         fi
       fi
       if [[ $os = mac ]]; then
@@ -303,9 +309,6 @@ build_target() {
         add cc_flags -O1
       else
         add cc_flags -Og
-        # needed if address is already specified? doesn't work on mac clang, at
-        # least
-        # add cc_flags -fsanitize=leak
       fi
       case $cc_id in
         tcc) add cc_flags -g -bt10;;
@@ -313,7 +316,7 @@ build_target() {
       ;;
     release)
       add cc_flags -DNDEBUG -O2 -g0
-      if [[ $protections_enabled != 1 ]]; then
+      if [[ $protections_enabled != 1 && $for_valgrind = 0 ]]; then
         add cc_flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
         case $cc_id in
           gcc|clang) add cc_flags -fno-stack-protector;;
