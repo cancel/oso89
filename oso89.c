@@ -307,7 +307,6 @@ osotrim(oso *s, char const *cut_set) {
 }
 
 #undef OSO_NOINLINE
-#undef OSO_UNSIGNEDOVERFLOW
 #undef OSO_HDR
 #undef OSO_CAP_MAX
 #undef OSO_INTERNAL
